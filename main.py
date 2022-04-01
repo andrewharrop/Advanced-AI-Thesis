@@ -19,12 +19,12 @@ from plotting import plot_image_classes
 # Write a small description for each function
 # Define Functions for all the repetitive tasks
 ###########################################################################################################
+
 dataset_1_tumor_images, dataset_1_normal_images = load_images(1)
 
-# plot_image_classes(dataset_1_normal_images, dataset_1_tumor_images, n_images=6)
-
 # Slower because there are 3000 images
-# dataset_2_tumor_images, dataset_2_normal_images = load_images(2)
+#dataset_2_tumor_images, dataset_2_normal_images = load_images(2)
+#plot_image_classes(dataset_2_normal_images, dataset_2_tumor_images, n_images=4, title="Dataset 2", figure_title="Dataset_2_Image_Classes")
 
 # Load as many datasets as needed
 X, Y = multiple_dataset_conversion(yes=[dataset_1_tumor_images], no=[dataset_1_normal_images])
