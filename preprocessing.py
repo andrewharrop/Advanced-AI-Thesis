@@ -4,6 +4,15 @@ from sklearn.preprocessing import LabelBinarizer
 
 from tensorflow.keras.utils import to_categorical
 
+"""
+    The purpose of this file is to provide a set of functions that can be used to preprocess images.
+
+    Authors:
+        Arsh Lalani, Faculty of Engineering, Western University
+        Andrew Harrop, Faculty of Engineering, Western University
+
+"""
+
 
 def convert_to_X_Y(images: list, label: str) -> tuple:
     

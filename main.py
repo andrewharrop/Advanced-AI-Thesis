@@ -11,7 +11,12 @@ from load_images import load_images
 from preprocessing import normalize_dataset
 from preprocessing import multiple_dataset_conversion
 
-from plotting import plot_image_classes
+from plotting import plot_cnn_history, plot_image_classes
+
+from Models.base_cnn import build_cnn
+from Models.base_cnn import train_cnn
+
+
 
 ############################## Code Formatting Guidelines  #################################################
 # Variable name =  var_name (with underscores)
@@ -19,6 +24,8 @@ from plotting import plot_image_classes
 # Write a small description for each function
 # Define Functions for all the repetitive tasks
 ###########################################################################################################
+
+# ---------------------------------------- Load data and preprocess ----------------------------------------
 
 dataset_1_tumor_images, dataset_1_normal_images = load_images(1)
 
@@ -34,3 +41,10 @@ X, Y = normalize_dataset(X, Y)
 
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.9, random_state=42, stratify=Y)
 
+# ---------------------------------------- Train and test the models ----------------------------------------
+
+base_cnn = build_cnn()
+
+base_cnn_history, base_cnn_accuracy = train_cnn(base_cnn, X_train, Y_train, X_test, Y_test, epochs=4)
+print(base_cnn_history)
+# plot_cnn_history(base_cnn_history, 4)

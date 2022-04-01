@@ -2,6 +2,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+"""
+    The purpose of this file is to provide a set of functions that can be used to plot images/data.
+
+    Authors:
+        Arsh Lalani, Faculty of Engineering, Western University
+        Andrew Harrop, Faculty of Engineering, Western University
+
+"""
+
 def plot_image(image: np.ndarray) -> None:
     
     """
@@ -66,3 +75,26 @@ def plot_image_classes(normal_images: list, tumor_images: list, n_images: int = 
         plt.savefig(figure_title + ".png")
 
     plt.show()
+
+def plot_cnn_history(history: dict, epochs: int) -> None:
+    
+    """
+        Plots the accuracy and loss of the model over the epochs.
+
+        :param epochs: The number of epochs.
+        :param history: The history of the model.
+    """
+    print(history.keys(), "\n")
+    print(history["loss"], "\n")
+    N = epochs
+    plt.style.use("ggplot")
+    plt.figure()
+    plt.plot(np.arange(0, N), history.history["loss"], label= "train_loss")
+    plt.plot(np.arange(0, N), history.history["val_loss"], label= "val_loss")
+    plt.plot(np.arange(0, N), history.history["accuracy"], label= "train_acc")
+    plt.plot(np.arange(0, N), history.history["val_accuracy"], label= "val_acc")
+    plt.title("Training Loss and Accuracy on Brain Dataset")
+    plt.xlabel("Epoch")
+    plt.ylabel("Loss / Accuracy")
+    plt.legend(loc= "lower left")
+    plt.savefig("plot.jpg")

@@ -2,6 +2,14 @@ from json import load
 import os
 import cv2
 
+"""
+    The purpose of this file is to provide a set of functions that can be used to load images and convert them into openCV format.
+
+    Authors:
+        Arsh Lalani, Faculty of Engineering, Western University
+        Andrew Harrop, Faculty of Engineering, Western University
+"""
+
 # Possible imporovement: save loaded images so we dont have to load -> resize every time, just load cv2 objects
 
 
@@ -40,3 +48,5 @@ def load_images(dataset: int = 1) -> tuple:
         normal_images.append(rndr)
 
     return tumor_images, normal_images
+
+
