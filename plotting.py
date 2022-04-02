@@ -72,29 +72,33 @@ def plot_image_classes(normal_images: list, tumor_images: list, n_images: int = 
         ax.set(xticks=[], yticks=[])
 
     if figure_title is not None:
-        plt.savefig(figure_title + ".png")
+        plt.savefig("./Figures/"+figure_title + ".png")
 
     plt.show()
 
-def plot_cnn_history(history: dict, epochs: int) -> None:
+def plot_cnn_history(history: dict) -> None:
     
     """
         Plots the accuracy and loss of the model over the epochs.
 
-        :param epochs: The number of epochs.
         :param history: The history of the model.
     """
-    print(history.keys(), "\n")
-    print(history["loss"], "\n")
-    N = epochs
-    plt.style.use("ggplot")
-    plt.figure()
-    plt.plot(np.arange(0, N), history.history["loss"], label= "train_loss")
-    plt.plot(np.arange(0, N), history.history["val_loss"], label= "val_loss")
-    plt.plot(np.arange(0, N), history.history["accuracy"], label= "train_acc")
-    plt.plot(np.arange(0, N), history.history["val_accuracy"], label= "val_acc")
+
+    N = len(history.history["loss"])
+    fig, ax1 = plt.subplots()
+    color = "tab:red"
+    ax1.set_xlabel("Epoch")
+    ax1.set_ylabel("Loss", color=color)
+    ax1.plot(np.arange(0, N), history.history["loss"], color=color)
+    ax1.tick_params(axis="y", labelcolor=color)
+
+    ax2 = ax1.twinx()  # instantiate a second axes that shares the same x-axis
+    color = "tab:blue"
+    ax2.set_ylabel("Accuracy", color=color)  # we already handled the x-label with ax1
+    ax2.plot(np.arange(0, N), history.history["accuracy"], color=color)
+    ax2.tick_params(axis="y", labelcolor=color)
+
+    fig.tight_layout()  # otherwise the right y-label is slightly clipped
+
     plt.title("Training Loss and Accuracy on Brain Dataset")
-    plt.xlabel("Epoch")
-    plt.ylabel("Loss / Accuracy")
-    plt.legend(loc= "lower left")
-    plt.savefig("plot.jpg")
+    plt.show()
