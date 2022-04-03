@@ -1,42 +1,61 @@
-import matplotlib.pyplot as plt
-import numpy as np
-import argparse
 import os
 import cv2
-from imutils import paths
+import numpy as np
+import matplotlib.pyplot as plt
+
+from sklearn.model_selection import train_test_split
+
+
+from load_images import load_images
+
+from preprocessing import normalize_dataset
+from preprocessing import multiple_dataset_conversion
+
+from plotting import plot_cnn_history, plot_image_classes
+
+from Models.base_cnn import build_cnn
+from Models.base_cnn import train_cnn
+
+
 
 ############################## Code Formatting Guidelines  #################################################
-#Variable name =  var_name (with underscores)
-#defining a function = def function_name(parameters):
-#Write a small description for each function
-#Define Functions for all the repetitive tasks
+# Variable name =  var_name (with underscores)
+# defining a function = def function_name(parameters):
+# Write a small description for each function
+# Define Functions for all the repetitive tasks
+###########################################################################################################
 
+# ---------------------------------------- Load data and preprocess ----------------------------------------
 
+dataset_1_tumor_images, dataset_1_normal_images = load_images(1)
 
-#Define image path 
-path = "./Data/dataset_1/brain_tumor_dataset"
-#Get paths for individual images
-image_paths = list(paths.list_images(path))
+# Slower because there are 3000 images
+#dataset_2_tumor_images, dataset_2_normal_images = load_images(2)
+#plot_image_classes(dataset_2_normal_images, dataset_2_tumor_images, n_images=4, title="Dataset 2", figure_title="Dataset_2_Image_Classes")
 
-#Defining lists to store images and labels 
-images = []
-labels = []
+# Load as many datasets as needed
+X, Y = multiple_dataset_conversion(yes=[dataset_1_tumor_images], no=[dataset_1_normal_images])
 
-#Iterating over image paths and extracting directory name (yes or no -> labels in our case)
-for image_path in image_paths:
-    #get the image labels 
-    label = image_path.split(os.path.sep)[-2]
-    #read image 
-    image = cv2.imread(image_path)
-    #resize image 
-    image = cv2.resize(image, (224, 224))
-    images.append(image)
-    labels.append(label)
+# Normalize the images and convert labels to binary encoding:
+X, Y = normalize_dataset(X, Y)
 
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.9, random_state=42, stratify=Y)
 
-#Plotting Images 
-def plot_image(image):
-    plt.imshow(image)
-    plt.show()
+# ---------------------------------------- Train and test the models ----------------------------------------
 
-plot_image(images[0])
+base_cnn = build_cnn()
+
+base_cnn_history, base_cnn_accuracy = train_cnn(base_cnn, X_train, Y_train, X_test, Y_test, epochs=4)
+print(base_cnn_history)
+print(base_cnn_history.history)
+print(base_cnn_history.history.keys())
+
+plt.style.use("ggplot")
+plt.figure()
+plt.plot(np.arange(0, 4), base_cnn_history.history["loss"], label= "train_loss")
+plt.title("Training Loss and Accuracy on Brain Dataset")
+plt.xlabel("Epoch")
+plt.ylabel("Loss / Accuracy")
+plt.legend(loc= "lower left")
+plt.savefig("plot.jpg")
+# plot_cnn_history(base_cnn_history, 4)
