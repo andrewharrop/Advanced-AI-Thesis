@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.preprocessing import LabelBinarizer
 import imutils
 
-from keras.applications.vgg16 import preprocess_input
+from tensorflow.keras.applications.vgg16 import preprocess_input
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from tensorflow.keras.utils import to_categorical
