@@ -4,6 +4,7 @@ from sklearn.preprocessing import LabelBinarizer
 import imutils
 
 from keras.applications.vgg16 import preprocess_input
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from tensorflow.keras.utils import to_categorical
 
@@ -73,49 +74,81 @@ def normalize_dataset(images: list, labels: list) -> tuple:
 
     return images, labels
 
-def crop_imgs(set_name, add_pixels_value=0):
+
+def crop_images(images: list) -> np.array:
     """
-    Finds the extreme points on the image and crops the rectangular out of them
+        Find the extreme points along the brain edge and crop the image. Removes blackspace.
+
+        :param images: The images to crop.
+        :return: The cropped images.
     """
-    set_new = []
-    for img in set_name:
-        gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+
+    cropped_images = []
+
+    for image in images:
+        gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
         gray = cv2.GaussianBlur(gray, (5, 5), 0)
 
-        # threshold the image, then perform a series of erosions +
-        # dilations to remove any small regions of noise
-        thresh = cv2.threshold(gray, 45, 255, cv2.THRESH_BINARY)[1]
-        thresh = cv2.erode(thresh, None, iterations=2)
-        thresh = cv2.dilate(thresh, None, iterations=2)
+        # Threhold the image and preform erosion and dilation to remove noise
+        threshold = cv2.threshold(gray, 45, 255, cv2.THRESH_BINARY)[1]
+        threshold = cv2.erode(threshold, None, iterations=2)
+        threshold = cv2.dilate(threshold, None, iterations=2)
 
-        # find contours in thresholded image, then grab the largest one
-        cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        cnts = imutils.grab_contours(cnts)
-        c = max(cnts, key=cv2.contourArea)
+        # Get max contour
+        contours = cv2.findContours(threshold.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours = imutils.grab_contours(contours)
+        max_contour = max(contours, key=cv2.contourArea)
 
         # find the extreme points
-        extLeft = tuple(c[c[:, :, 0].argmin()][0])
-        extRight = tuple(c[c[:, :, 0].argmax()][0])
-        extTop = tuple(c[c[:, :, 1].argmin()][0])
-        extBot = tuple(c[c[:, :, 1].argmax()][0])
+        extLeft = tuple(max_contour[max_contour[:, :, 0].argmin()][0])
+        extRight = tuple(max_contour[max_contour[:, :, 0].argmax()][0])
+        extTop = tuple(max_contour[max_contour[:, :, 1].argmin()][0])
+        extBot = tuple(max_contour[max_contour[:, :, 1].argmax()][0])
 
-        ADD_PIXELS = add_pixels_value
-        new_img = img[extTop[1]-ADD_PIXELS:extBot[1]+ADD_PIXELS, extLeft[0]-ADD_PIXELS:extRight[0]+ADD_PIXELS].copy()
-        set_new.append(new_img)
+        # crop the image
+        new_image = image[extTop[1]:extBot[1], extLeft[0]:extRight[0]].copy()
+        cropped_images.append(new_image)
+    return np.array(cropped_images)
 
-    return np.array(set_new)
+    
 
 
-def preprocess_imgs(set_name, img_size):
+def preprocess_images(images: np.array, dimensions:tuple=(224, 224)) -> np.array:
     """
-    Resize and apply VGG-15 preprocessing
+        Preprocess images for VGG16.
+
+        :param images: The images to preprocess.
+        :param dimensions: The dimensions to resize the images to.
+
+        :return: The preprocessed images.
     """
-    set_new = []
-    for img in set_name:
-        img = cv2.resize(
-            img,
-            dsize=img_size,
+    preprocessed_images = []
+    for image in images:
+        image = cv2.resize(
+            image,
+            dsize=dimensions,
             interpolation=cv2.INTER_CUBIC
         )
-        set_new.append(preprocess_input(img))
-    return np.array(set_new)
+        preprocessed_images.append(preprocess_input(image))
+    return np.array(preprocessed_images)
+
+
+def augment_image_set(X: np.array, Y: np.array, augmentation:ImageDataGenerator, augment_limit:int=3) -> tuple:
+    """
+        Augment the image set.
+
+        :param X: The images to augment.
+        :param Y: The labels of the images.
+        :param augmentation: The augmentation to use.
+        :return: The augmented images and labels.
+    """
+    X_augmented = []
+    Y_augmented = []
+    for image in range(len(X)):
+        X_augmented.append(X[image])
+        Y_augmented.append(Y[image])
+        for i in range(augment_limit):
+            augmented_image = augmentation.flow(np.array([X[image]]), np.array([Y[image]]), batch_size=1).next()[0][0]
+            X_augmented.append(augmented_image)
+            Y_augmented.append(Y[image])
+    return np.array(X_augmented), np.array(Y_augmented)

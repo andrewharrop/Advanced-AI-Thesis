@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
 """
@@ -102,3 +103,33 @@ def plot_cnn_history(history: dict) -> None:
 
     plt.title("Training Loss and Accuracy on Brain Dataset")
     plt.show()
+
+
+def plot_augmented(image: np.ndarray, datagen:ImageDataGenerator ) -> None:
+    
+    """
+
+        :param image: The image to plot.
+        :param label: The label of the image.
+    """
+
+    augmented_test_image = image.reshape((1,)+image.shape)
+    examples = 0
+
+
+    # Create a 4x5 grid of augmented images
+    fig, axs = plt.subplots(4, 5, figsize=(10, 10))
+    # Remove horizontal space between axs
+    fig.subplots_adjust(hspace=0.1, wspace=0.1)
+
+    for batch in datagen.flow(augmented_test_image, batch_size=1):
+        coord = examples // 5, examples % 5
+        axs[coord].imshow(batch[0])
+        axs[coord].axis('off')
+
+        examples += 1
+        if examples >= 20:
+            break
+
+    plt.show()
+    fig.savefig('./Figures/augmented_images.png')
