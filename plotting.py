@@ -12,7 +12,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 """
 
-def plot_image(image: np.ndarray) -> None:
+def plot_image(image: np.ndarray, save:str=None) -> None:
     
     """
         Plot an image.
@@ -20,7 +20,10 @@ def plot_image(image: np.ndarray) -> None:
         :param image: The image to plot.
     """
 
+    
     plt.imshow(image)
+    if save is not None:
+        plt.savefig("./Figures/"+save+".png")
     plt.show()
 
 
