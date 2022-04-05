@@ -1,7 +1,7 @@
 import numpy as np
 
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.applications import VGG16
+from tensorflow.keras.applications.vgg16 import VGG16
 from tensorflow.keras.layers import AveragePooling2D
 from tensorflow.keras.layers import Flatten
 from tensorflow.keras.layers import Dense
@@ -69,7 +69,6 @@ def train_cnn(model: Model, train_X: list, train_Y: list, test_X: list, test_Y: 
         :return: A tuple containing the training and testing accuracy.
     """
 
-    train_generator = ImageDataGenerator(fill_mode='nearest', rotation_range=15)
 
 
     train_steps = len(train_X) // batch_size
