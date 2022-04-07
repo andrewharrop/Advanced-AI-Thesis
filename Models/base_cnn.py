@@ -1,7 +1,7 @@
 import numpy as np
 
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.applications import VGG16
+from tensorflow.keras.applications.vgg16 import VGG16
 from tensorflow.keras.layers import AveragePooling2D
 from tensorflow.keras.layers import Flatten
 from tensorflow.keras.layers import Dense
@@ -12,6 +12,11 @@ from tensorflow.keras.optimizers import Adam
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 
+
+from tensorflow.keras.metrics import AUC, Recall, Precision
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout, Conv2D , MaxPooling2D, Flatten
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 """
     The purpose of this file is to test a CNN model.
 
@@ -93,6 +98,7 @@ def train_cnn(model: Model, train_X: list, train_Y: list, test_X: list, test_Y: 
     print("Accuracy: %f" % accuracy)
 
     return history, accuracy
+
 
 
 
