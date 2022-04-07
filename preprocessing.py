@@ -152,3 +152,9 @@ def augment_image_set(X: np.array, Y: np.array, augmentation:ImageDataGenerator,
             X_augmented.append(augmented_image)
             Y_augmented.append(Y[image])
     return np.array(X_augmented), np.array(Y_augmented)
+
+
+def labels_to_categorical(labels):
+    label_binarizer = LabelBinarizer()
+    labels = label_binarizer .fit_transform(labels)
+    return to_categorical(labels)
