@@ -22,6 +22,11 @@ def plot_image(image: np.ndarray, save:str=None) -> None:
 
     
     plt.imshow(image)
+    plt.axis('off')
+    # Remove the x and y ticks
+    plt.xticks([])
+    plt.yticks([])
+
     if save is not None:
         plt.savefig("./Figures/"+save+".png")
     plt.show()
