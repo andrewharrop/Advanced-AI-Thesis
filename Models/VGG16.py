@@ -50,7 +50,7 @@ def train_vgg16(model, train_generator, validation_generator, epochs: int=10):
 
     history = model.fit(
         train_generator,
-        steps_per_epoch=8,
+        steps_per_epoch=4,
         epochs=epochs,
         validation_data=validation_generator,
         validation_steps=2,
