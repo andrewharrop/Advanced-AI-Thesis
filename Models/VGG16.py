@@ -1,5 +1,5 @@
 import numpy as np
-from keras.models import Sequential
+from tensorflow.keras.models import Sequential
 from tensorflow.keras.optimizers import RMSprop
 
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
@@ -15,7 +15,7 @@ from tensorflow.keras.applications.vgg16 import preprocess_input
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 
-from keras.callbacks import EarlyStopping
+from tensorflow.keras.callbacks import EarlyStopping
 
 """
     The purpose of this file is to test a CNN model.
